@@ -2,18 +2,388 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>CANRec</title>
 <style>
-  body { font-family: monospace; background: #111; color: #ccc; padding: 2rem; max-width: 600px; }
-  h1   { color: #4fc; margin: 0 0 0.5rem; }
-  p    { margin: 0.25rem 0; }
-  a    { color: #4fc; }
+:root {
+  --bg:      #0e0e0e;
+  --surface: #181818;
+  --border:  #242424;
+  --accent:  #44ffcc;
+  --red:     #ff4455;
+  --text:    #f0f0f0;
+  --muted:   #606060;
+  --safe-t:  env(safe-area-inset-top, 0px);
+  --safe-b:  env(safe-area-inset-bottom, 0px);
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100dvh;
+}
+
+/* ── Header ── */
+.hdr {
+  position: sticky; top: 0; z-index: 10;
+  background: var(--bg);
+  border-bottom: 1px solid var(--border);
+  padding: calc(0.9rem + var(--safe-t)) 1rem 0.9rem;
+  display: flex; align-items: center; justify-content: space-between;
+}
+.hdr-brand { display: flex; align-items: center; gap: 0.5rem; }
+.hdr-logo {
+  width: 28px; height: 28px; border-radius: 7px;
+  background: var(--accent); display: flex; align-items: center;
+  justify-content: center; font-size: 12px; font-weight: 800; color: #000;
+}
+.hdr-title { font-size: 1.05rem; font-weight: 600; letter-spacing: 0.02em; }
+.conn-dot {
+  width: 8px; height: 8px; border-radius: 50%;
+  background: var(--muted); transition: background 0.4s;
+}
+.conn-dot.on { background: var(--accent); }
+
+/* ── Layout ── */
+.content {
+  padding: 1rem 1rem calc(1rem + var(--safe-b));
+  display: flex; flex-direction: column; gap: 0.875rem;
+  max-width: 480px; margin: 0 auto;
+}
+
+/* ── Card ── */
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  overflow: hidden;
+}
+.card-label {
+  padding: 0.7rem 1rem 0;
+  font-size: 0.65rem; font-weight: 700;
+  text-transform: uppercase; letter-spacing: 0.12em;
+  color: var(--muted);
+  display: flex; align-items: center; gap: 0.4rem;
+}
+.badge-soon {
+  font-size: 0.6rem; padding: 0.1rem 0.4rem;
+  border-radius: 4px; background: var(--border);
+  color: var(--muted); font-weight: 600; letter-spacing: 0.05em;
+}
+
+/* ── Recording card ── */
+.rec-body {
+  padding: 1.1rem 1rem 0.75rem;
+  display: flex; align-items: center; gap: 1rem;
+}
+.rec-ring {
+  width: 52px; height: 52px; border-radius: 50%; flex-shrink: 0;
+  border: 2px solid #2e2020;
+  display: flex; align-items: center; justify-content: center;
+  transition: border-color 0.3s;
+}
+.rec-ring.on {
+  border-color: var(--red);
+  animation: pulse 1.5s ease-in-out infinite;
+}
+@keyframes pulse {
+  0%,100% { box-shadow: 0 0 0 0 rgba(255,68,85,.35); }
+  50%      { box-shadow: 0 0 0 9px rgba(255,68,85,0); }
+}
+.rec-dot {
+  width: 18px; height: 18px; border-radius: 50%;
+  background: #3a2a2a; transition: background 0.3s, border-radius 0.15s;
+}
+.rec-ring.on .rec-dot { background: var(--red); }
+.rec-info { flex: 1; }
+.rec-state {
+  font-size: 0.75rem; font-weight: 600; letter-spacing: 0.08em;
+  color: var(--muted); text-transform: uppercase;
+  transition: color 0.3s;
+}
+.rec-state.on { color: var(--red); }
+.rec-time {
+  font-size: 1.75rem; font-weight: 300; letter-spacing: 0.06em;
+  font-variant-numeric: tabular-nums; color: var(--muted);
+  transition: color 0.3s; line-height: 1.2;
+}
+.rec-time.on { color: var(--text); }
+.rec-seg { font-size: 0.72rem; color: var(--muted); margin-top: 0.15rem; }
+
+.rec-actions {
+  padding: 0 1rem 1rem;
+  display: flex; gap: 0.5rem;
+}
+.btn {
+  flex: 1; padding: 0.7rem 1rem; border-radius: 9px; border: none;
+  font-size: 0.875rem; font-weight: 600; cursor: pointer;
+  transition: opacity 0.15s, transform 0.1s;
+  min-height: 44px;
+}
+.btn:active { opacity: 0.75; transform: scale(0.98); }
+.btn:disabled { opacity: 0.3; cursor: default; transform: none; }
+.btn-rec  { background: var(--accent); color: #000; }
+.btn-stop { background: #2a1010; color: var(--red); border: 1px solid #3a1a1a; }
+.btn-save { background: var(--border); color: var(--text); }
+
+/* ── Live stats ── */
+.stats-row {
+  display: grid; grid-template-columns: repeat(3, 1fr);
+  gap: 1px; background: var(--border);
+}
+.stat {
+  background: var(--surface); padding: 0.9rem 0.5rem; text-align: center;
+}
+.stat-lbl {
+  font-size: 0.6rem; text-transform: uppercase; letter-spacing: 0.1em;
+  color: var(--muted); margin-bottom: 0.35rem;
+}
+.stat-val {
+  font-size: 1.05rem; font-weight: 500; color: var(--muted);
+  font-variant-numeric: tabular-nums;
+}
+.stat-val.live { color: var(--text); }
+.stat-unit { font-size: 0.6rem; margin-left: 0.1rem; }
+
+/* ── Clips ── */
+.clips-body { padding: 0.25rem 0; }
+.clip {
+  padding: 0.875rem 1rem; display: flex; align-items: center; gap: 0.75rem;
+  border-bottom: 1px solid var(--border); cursor: pointer;
+  transition: background 0.15s;
+}
+.clip:last-child { border-bottom: none; }
+.clip:active { background: #202020; }
+.clip-thumb {
+  width: 40px; height: 40px; border-radius: 8px; flex-shrink: 0;
+  background: #1c2626; border: 1px solid #283030;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 16px;
+}
+.clip-info { flex: 1; min-width: 0; }
+.clip-name {
+  font-size: 0.875rem; font-weight: 500;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.clip-meta { font-size: 0.72rem; color: var(--muted); margin-top: 0.15rem; }
+.clip-saved {
+  font-size: 0.6rem; padding: 0.2rem 0.45rem; border-radius: 4px;
+  background: #0e201a; color: var(--accent); border: 1px solid #1a3028;
+  font-weight: 700; letter-spacing: 0.06em; flex-shrink: 0;
+}
+
+.empty {
+  padding: 2.25rem 1rem; text-align: center;
+  color: var(--muted); font-size: 0.85rem; line-height: 1.5;
+}
+.empty-icon { font-size: 1.75rem; display: block; margin-bottom: 0.5rem; }
+
+/* ── System ── */
+.sys-grid {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 1px; background: var(--border);
+}
+.sys-item { background: var(--surface); padding: 0.8rem 1rem; }
+.sys-lbl {
+  font-size: 0.6rem; text-transform: uppercase; letter-spacing: 0.1em;
+  color: var(--muted); margin-bottom: 0.25rem;
+}
+.sys-val { font-size: 0.95rem; font-variant-numeric: tabular-nums; }
 </style>
 </head>
 <body>
-<h1>CANRec DVR</h1>
-<p>System is up.</p>
-<p><a href="/cgi-bin/status.cgi">Live status &rarr;</a></p>
+
+<header class="hdr">
+  <div class="hdr-brand">
+    <div class="hdr-logo">CR</div>
+    <span class="hdr-title">CANRec</span>
+  </div>
+  <div id="dot" class="conn-dot"></div>
+</header>
+
+<main class="content">
+
+  <!-- Recording -->
+  <div class="card">
+    <div class="card-label">Recording</div>
+    <div class="rec-body">
+      <div class="rec-ring" id="rec-ring"><div class="rec-dot"></div></div>
+      <div class="rec-info">
+        <div class="rec-state" id="rec-state">Idle</div>
+        <div class="rec-time"  id="rec-time">--:--:--</div>
+        <div class="rec-seg"   id="rec-seg"></div>
+      </div>
+    </div>
+    <div class="rec-actions">
+      <button class="btn btn-rec" id="btn-rec" disabled>Record</button>
+      <button class="btn btn-save" id="btn-save" disabled>Save Clip</button>
+    </div>
+  </div>
+
+  <!-- Live -->
+  <div class="card">
+    <div class="card-label">Live <span class="badge-soon">Phase 3–4</span></div>
+    <div class="stats-row">
+      <div class="stat">
+        <div class="stat-lbl">Speed</div>
+        <div class="stat-val" id="s-speed">--<span class="stat-unit">km/h</span></div>
+      </div>
+      <div class="stat">
+        <div class="stat-lbl">GPS</div>
+        <div class="stat-val" id="s-gps">--</div>
+      </div>
+      <div class="stat">
+        <div class="stat-lbl">Camera</div>
+        <div class="stat-val" id="s-cam">--</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Clips -->
+  <div class="card">
+    <div class="card-label">Clips</div>
+    <div class="clips-body" id="clips">
+      <div class="empty"><span class="empty-icon">📂</span>No recordings yet</div>
+    </div>
+  </div>
+
+  <!-- System -->
+  <div class="card">
+    <div class="card-label">System</div>
+    <div class="sys-grid">
+      <div class="sys-item"><div class="sys-lbl">Uptime</div><div class="sys-val" id="s-up">--</div></div>
+      <div class="sys-item"><div class="sys-lbl">Memory</div><div class="sys-val" id="s-mem">--</div></div>
+      <div class="sys-item"><div class="sys-lbl">Load</div><div class="sys-val" id="s-load">--</div></div>
+      <div class="sys-item"><div class="sys-lbl">Storage</div><div class="sys-val" id="s-stor">--</div></div>
+    </div>
+  </div>
+
+</main>
+
+<script>
+const el = id => document.getElementById(id);
+
+let isRec = false, recStart = null, tick = null;
+
+function fmtUp(s) {
+  if (s < 60)   return s + 's';
+  if (s < 3600) return Math.floor(s/60) + 'm';
+  return Math.floor(s/3600) + 'h ' + Math.floor((s%3600)/60) + 'm';
+}
+
+function fmtDur(s) {
+  const h = String(Math.floor(s/3600)).padStart(2,'0');
+  const m = String(Math.floor((s%3600)/60)).padStart(2,'0');
+  const x = String(s%60).padStart(2,'0');
+  return `${h}:${m}:${x}`;
+}
+
+function setRec(on, serverDuration) {
+  isRec = on;
+  el('rec-ring').classList.toggle('on', on);
+  el('rec-state').classList.toggle('on', on);
+  el('rec-time').classList.toggle('on', on);
+  el('rec-state').textContent = on ? 'REC' : 'Idle';
+  el('btn-rec').className  = 'btn ' + (on ? 'btn-stop' : 'btn-rec');
+  el('btn-rec').textContent = on ? 'Stop' : 'Record';
+  el('btn-save').disabled  = !on;
+
+  clearInterval(tick); tick = null;
+  if (on) {
+    recStart = Date.now() - (serverDuration || 0) * 1000;
+    tick = setInterval(() => {
+      el('rec-time').textContent = fmtDur(Math.floor((Date.now()-recStart)/1000));
+    }, 1000);
+  } else {
+    recStart = null;
+    el('rec-time').textContent = '--:--:--';
+    el('rec-seg').textContent  = '';
+  }
+}
+
+async function pollStatus() {
+  try {
+    const r = await fetch('/cgi-bin/status.cgi', {cache:'no-store'});
+    if (!r.ok) throw 0;
+    const d = await r.json();
+
+    el('dot').classList.add('on');
+    el('btn-rec').disabled = false;
+
+    el('s-up').textContent   = fmtUp(d.uptime ?? 0);
+    el('s-load').textContent = (d.load?.[0] ?? '--').toString();
+
+    if (d.memory) {
+      const pct = Math.round((d.memory.used_mb / d.memory.total_mb) * 100);
+      el('s-mem').textContent = pct + '%';
+    }
+    if (d.storage?.total_mb > 0) {
+      const pct = Math.round((d.storage.used_mb / d.storage.total_mb) * 100);
+      el('s-stor').textContent = pct + '%';
+    } else {
+      el('s-stor').textContent = '--';
+    }
+
+    if (d.recording) {
+      const wasRec = isRec;
+      if (d.recording.active !== wasRec) setRec(d.recording.active, d.recording.duration);
+      if (d.recording.segment) el('rec-seg').textContent = 'seg ' + d.recording.segment;
+    }
+
+    if (d.camera?.connected) {
+      el('s-cam').innerHTML = '<span style="color:var(--accent)">●</span>';
+      el('s-cam').classList.add('live');
+    }
+    if (d.gps?.speed_kmh != null) {
+      el('s-speed').innerHTML = Math.round(d.gps.speed_kmh) + '<span class="stat-unit">km/h</span>';
+      el('s-speed').classList.add('live');
+    }
+    if (d.gps?.fix) {
+      el('s-gps').textContent = '●';
+      el('s-gps').classList.add('live');
+    }
+
+  } catch {
+    el('dot').classList.remove('on');
+  }
+}
+
+async function pollClips() {
+  try {
+    const r = await fetch('/cgi-bin/clips.cgi', {cache:'no-store'});
+    if (!r.ok) return;
+    const d = await r.json();
+    if (!d.clips?.length) return;
+
+    el('clips').innerHTML = d.clips.map(c => `
+      <div class="clip">
+        <div class="clip-thumb">▶</div>
+        <div class="clip-info">
+          <div class="clip-name">${c.name}</div>
+          <div class="clip-meta">${c.date} · ${c.duration} · ${c.size}</div>
+        </div>
+        ${c.locked ? '<span class="clip-saved">SAVED</span>' : ''}
+      </div>
+    `).join('');
+  } catch { /* clips.cgi not yet deployed */ }
+}
+
+el('btn-rec').addEventListener('click', async () => {
+  // TODO: POST to /cgi-bin/rec.cgi?action=start|stop when Phase 1 lands
+  setRec(!isRec);
+});
+
+el('btn-save').addEventListener('click', () => {
+  // TODO: POST to /cgi-bin/rec.cgi?action=save when Phase 1 lands
+});
+
+pollStatus();
+pollClips();
+setInterval(pollStatus,  3000);
+setInterval(pollClips,  10000);
+</script>
 </body>
 </html>
