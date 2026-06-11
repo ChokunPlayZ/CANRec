@@ -29,6 +29,12 @@ ln -sf  /tmp "$TARGET_DIR/var/tmp"
 rm -f   "$TARGET_DIR/etc/resolv.conf"
 ln -sf  /tmp/resolv.conf "$TARGET_DIR/etc/resolv.conf"
 
+# ── Build stamp → /etc/issue (printed by getty before login prompt) ──────────
+BUILD_TS=$(date -u '+%Y-%m-%d %H:%M UTC')
+BUILD_SHA=$(git -C "$BOARD_DIR" rev-parse --short HEAD 2>/dev/null || echo "unknown")
+printf 'CANRec DVR\nBuilt %s  (%s)\n\n' "$BUILD_TS" "$BUILD_SHA" \
+    > "$TARGET_DIR/etc/issue"
+
 # ── Web root permissions ──────────────────────────────────────────────────────
 chmod 755 "$TARGET_DIR/var/www/cgi-bin/status.cgi"
 
