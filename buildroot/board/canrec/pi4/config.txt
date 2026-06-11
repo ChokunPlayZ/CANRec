@@ -1,0 +1,18 @@
+# Raspberry Pi 4 firmware config — boot-speed tuned
+
+# 64-bit kernel, explicit filename so firmware doesn't guess
+arm_64bit=1
+kernel=Image
+
+# Kill the rainbow splash and boot delay
+disable_splash=1
+boot_delay=0
+
+# GPU memory floor (no display in MVP)
+gpu_mem=64
+
+# Enable PL011 UART for serial console (useful during bring-up)
+enable_uart=1
+
+# Disable Bluetooth (not needed, saves boot time)
+dtoverlay=disable-bt

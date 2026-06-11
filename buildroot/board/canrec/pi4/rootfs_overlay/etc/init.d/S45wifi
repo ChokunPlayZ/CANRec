@@ -1,0 +1,27 @@
+#!/bin/sh
+case "$1" in
+    start)
+        printf "Starting WiFi AP: "
+        modprobe brcmfmac
+        sleep 2
+        rfkill unblock wifi 2>/dev/null || true
+        ip link set wlan0 up
+        ip addr add 192.168.99.1/24 dev wlan0
+        touch /tmp/udhcpd.leases
+        /usr/sbin/udhcpd /etc/udhcpd.conf
+        /usr/sbin/hostapd -B -P /tmp/hostapd.pid /etc/hostapd.conf
+        echo "OK"
+        ;;
+    stop)
+        printf "Stopping WiFi AP: "
+        kill "$(cat /tmp/hostapd.pid 2>/dev/null)" 2>/dev/null || true
+        kill "$(cat /tmp/udhcpd.pid  2>/dev/null)" 2>/dev/null || true
+        ip addr flush dev wlan0 2>/dev/null || true
+        ip link set wlan0 down 2>/dev/null || true
+        echo "OK"
+        ;;
+    *)
+        echo "Usage: $0 {start|stop}"
+        exit 1
+        ;;
+esac
