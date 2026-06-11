@@ -14,8 +14,12 @@
 # Run init.d scripts (network, syslog, etc.)
 ::sysinit:/etc/init.d/rcS
 
+# Seed writable webroot from read-only overlay into tmpfs so rsync can update
+# files live without reflashing (/tmp is already a 64 MB tmpfs from fstab)
+::sysinit:/bin/cp -a /var/www /tmp/www
+
 # Start the web status server (daemonises itself)
-::once:/usr/sbin/httpd -p 80 -h /var/www -c /etc/httpd.conf
+::once:/usr/sbin/httpd -p 80 -h /tmp/www -c /etc/httpd.conf
 
 # HDMI console
 tty1::respawn:/sbin/getty -L tty1 0 vt100
