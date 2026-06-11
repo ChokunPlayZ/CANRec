@@ -1,20 +1,22 @@
 #!/bin/sh
 case "$1" in
     start)
-        printf "Starting WiFi AP: "
-        modprobe brcmfmac
-        # brcmfmac downloads firmware to chip over SDIO asynchronously;
-        # poll instead of sleeping a fixed amount
-        for i in $(seq 1 50); do
-            ip link show wlan0 >/dev/null 2>&1 && break
-            sleep 0.1
-        done
-        rfkill unblock wifi 2>/dev/null || true
-        ip link set wlan0 up
-        ip addr add 192.168.99.1/24 dev wlan0
-        touch /tmp/udhcpd.leases
-        /usr/sbin/udhcpd /etc/udhcpd.conf
-        /usr/sbin/hostapd -B -P /tmp/hostapd.pid /etc/hostapd.conf
+        printf "Starting WiFi AP (async): "
+        (
+            modprobe brcmfmac
+            # brcmfmac downloads firmware to chip over SDIO asynchronously;
+            # poll instead of sleeping a fixed amount
+            for i in $(seq 1 50); do
+                ip link show wlan0 >/dev/null 2>&1 && break
+                sleep 0.1
+            done
+            rfkill unblock wifi 2>/dev/null || true
+            ip link set wlan0 up
+            ip addr add 192.168.99.1/24 dev wlan0
+            touch /tmp/udhcpd.leases
+            /usr/sbin/udhcpd /etc/udhcpd.conf
+            /usr/sbin/hostapd -B -P /tmp/hostapd.pid /etc/hostapd.conf
+        ) &
         echo "OK"
         ;;
     stop)
