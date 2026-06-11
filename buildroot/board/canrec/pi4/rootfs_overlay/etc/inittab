@@ -11,6 +11,11 @@
 ::sysinit:/bin/mount -a
 ::sysinit:/bin/hostname -F /etc/hostname
 
+# Dropbear needs a writable /etc/dropbear for host keys; bind-mount a tmpfs
+# dir over it so the read-only root is never touched
+::sysinit:/bin/mkdir -p /tmp/dropbear
+::sysinit:/bin/mount -o bind /tmp/dropbear /etc/dropbear
+
 # Run init.d scripts (network, syslog, etc.)
 ::sysinit:/etc/init.d/rcS
 
