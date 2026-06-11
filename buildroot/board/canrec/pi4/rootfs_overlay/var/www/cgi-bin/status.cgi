@@ -16,18 +16,36 @@ $(df -m /data | awk 'NR==2{print $2,$3,$4}')
 EOF
 fi
 
-# ── Dummy telemetry (remove once real sources are wired up) ──────────────────
-# Values cycle on a ~60 s period so the UI looks alive during demos.
+# ── Dummy telemetry (remove once real sources are wired in Phase 1+) ─────────
 t=$((uptime % 60))
-speed=$(awk "BEGIN{printf \"%d\", 60 + 40*sin($t * 3.14159/30)}")
-throttle=$(awk "BEGIN{printf \"%d\", 30 + 25*sin($t * 3.14159/20 + 1)}")
-brake=$(awk "BEGIN{printf \"%d\", t=$t; if(t>40&&t<50) print 35+int(t-40)*3; else print 0}")
-rec_duration=$uptime
-seg="clip_$(printf '%04d' $((uptime/300 + 1))).h264"
 
-printf '{"hostname":"%s","uptime":%s,"memory":{"used_mb":%s,"total_mb":%s},"load":[%s,%s,%s],"storage":{"used_mb":%s,"total_mb":%s},"recording":{"active":true,"duration":%s,"segment":"%s"},"camera":{"connected":true},"gps":{"fix":true,"speed_kmh":%s,"throttle":%s,"brake":%s}}\n' \
+# Speed: triangle wave 60–100 km/h, period 60 s
+if [ "$t" -lt 30 ]; then
+    speed=$((60 + t * 4 / 3))
+else
+    speed=$((100 - (t - 30) * 4 / 3))
+fi
+
+# Throttle: triangle wave 20–60%, offset by 15 s
+tp=$(( (uptime + 15) % 60 ))
+if [ "$tp" -lt 30 ]; then
+    throttle=$((20 + tp * 4 / 3))
+else
+    throttle=$((60 - (tp - 30) * 4 / 3))
+fi
+
+# Brake: spikes 0–56% for ~8 s each minute
+if [ "$t" -gt 43 ] && [ "$t" -lt 51 ]; then
+    brake=$(( (t - 43) * 8 ))
+else
+    brake=0
+fi
+
+seg="clip_$(printf '%04d' $((uptime / 300 + 1))).h264"
+
+printf '{"hostname":"%s","uptime":%d,"memory":{"used_mb":%d,"total_mb":%d},"load":[%s,%s,%s],"storage":{"used_mb":%d,"total_mb":%d},"recording":{"active":true,"duration":%d,"segment":"%s"},"camera":{"connected":true},"gps":{"fix":true,"speed_kmh":%d,"throttle":%d,"brake":%d}}\n' \
   "$(hostname)" "$uptime" "$mem_used" "$mem_total" \
   "$load1" "$load5" "$load15" \
   "$stor_used" "$stor_total" \
-  "$rec_duration" "$seg" \
+  "$uptime" "$seg" \
   "$speed" "$throttle" "$brake"
