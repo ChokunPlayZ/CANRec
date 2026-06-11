@@ -8,9 +8,10 @@ SSH_OPTS = -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null
 .PHONY: deploy-web ssh build
 
 # Push web files live to the running Pi (no reflash needed).
+# Uses tar-over-SSH — no rsync needed on the Pi.
 # Reboot reverts to the last flashed image; flash to make permanent.
 deploy-web:
-	rsync -avz --delete --no-owner --no-group -e "ssh $(SSH_OPTS)" $(WEBROOT)/ $(PI):/tmp/www/
+	tar -czf - -C $(WEBROOT) . | ssh $(SSH_OPTS) $(PI) 'tar -xzf - -C /tmp/www'
 
 # Open a shell on the Pi.
 ssh:
