@@ -11,7 +11,7 @@ SSH_OPTS = -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null
 # Uses tar-over-SSH — no rsync needed on the Pi.
 # Reboot reverts to the last flashed image; flash to make permanent.
 deploy-web:
-	tar -czf - -C $(WEBROOT) . | ssh $(SSH_OPTS) $(PI) 'tar -xzf - -C /tmp/www'
+	tar -cf - -C $(WEBROOT) . | ssh $(SSH_OPTS) $(PI) 'tar -xf - -C /tmp/www'
 
 # Open a shell on the Pi.
 ssh:
