@@ -9,434 +9,635 @@
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Share+Tech+Mono&display=swap" rel="stylesheet">
 <style>
 :root {
-  --bg:      #030c0a;
-  --surface: #030c0a;
-  --grid:    rgba(68,255,204,0.035);
-  --accent:  #44ffcc;
-  --dim:     rgba(68,255,204,0.35);
-  --red:     #ff2244;
-  --border:  rgba(68,255,204,0.15);
-  --text:    #9fe8d4;
-  --muted:   rgba(68,255,204,0.3);
-  --glow-sm: 0 0 7px var(--accent);
-  --glow:    0 0 10px var(--accent), 0 0 28px rgba(68,255,204,0.35);
-  --glow-xl: 0 0 12px var(--accent), 0 0 40px rgba(68,255,204,0.4), 0 0 80px rgba(68,255,204,0.15);
-  --safe-t:  env(safe-area-inset-top, 0px);
-  --safe-b:  env(safe-area-inset-bottom, 0px);
+  --bg:     #030c0a;
+  --surf:   #060f0c;
+  --border: rgba(68,255,204,0.13);
+  --grid:   rgba(68,255,204,0.03);
+  --accent: #44ffcc;
+  --dim:    rgba(68,255,204,0.3);
+  --red:    #ff2244;
+  --amber:  #ffaa00;
+  --text:   #9fe8d4;
+  --muted:  rgba(68,255,204,0.28);
+  --gs:     0 0 7px var(--accent);
+  --gm:     0 0 10px var(--accent), 0 0 28px rgba(68,255,204,0.3);
+  --safe-t: env(safe-area-inset-top, 0px);
+  --safe-b: env(safe-area-inset-bottom, 0px);
 }
-
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-html { height: 100%; }
-
-body {
-  font-family: 'Share Tech Mono', 'Courier New', monospace;
-  background: var(--bg);
-  color: var(--text);
-  height: 100%;
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;overflow:hidden}
+body{
+  font-family:'Share Tech Mono','Courier New',monospace;
+  background:var(--bg); color:var(--text);
   background-image:
-    linear-gradient(var(--grid) 1px, transparent 1px),
-    linear-gradient(90deg, var(--grid) 1px, transparent 1px);
-  background-size: 52px 52px;
+    linear-gradient(var(--grid) 1px,transparent 1px),
+    linear-gradient(90deg,var(--grid) 1px,transparent 1px);
+  background-size:52px 52px;
 }
-
-/* scanline overlay */
-body::after {
-  content: '';
-  position: fixed; inset: 0; pointer-events: none; z-index: 999;
-  background: repeating-linear-gradient(
-    transparent 0px, transparent 1px,
-    rgba(0,0,0,0.1) 1px, rgba(0,0,0,0.1) 2px
-  );
+body::after{
+  content:'';position:fixed;inset:0;pointer-events:none;z-index:999;
+  background:repeating-linear-gradient(transparent 0,transparent 1px,rgba(0,0,0,0.1) 1px,rgba(0,0,0,0.1) 2px);
 }
 
 /* ── Shell ── */
-.shell {
-  height: 100dvh;
-  display: grid;
-  grid-template-rows: auto 1fr auto;
-  padding-top: var(--safe-t);
-  padding-bottom: var(--safe-b);
-  overflow: hidden;
+.shell{
+  height:100dvh;display:grid;
+  grid-template-rows:auto 1fr auto;
+  padding-top:var(--safe-t);padding-bottom:var(--safe-b);
+  overflow:hidden;
 }
 
 /* ── Header ── */
-.hdr {
-  display: grid;
-  grid-template-columns: 1fr auto 1fr;
-  align-items: center;
-  padding: 0.65rem 1.25rem;
-  border-bottom: 1px solid var(--border);
-  background: rgba(3,12,10,0.95);
-  gap: 1rem;
+.hdr{
+  display:flex;align-items:center;gap:0.75rem;
+  padding:0.55rem 1.1rem;
+  border-bottom:1px solid var(--border);
+  background:rgba(3,12,10,0.96);
+  flex-wrap:wrap;
 }
+.brand{display:flex;align-items:center;gap:0.5rem;margin-right:0.25rem;}
+.brand-mark{
+  width:26px;height:26px;border-radius:5px;flex-shrink:0;
+  border:1.5px solid var(--dim);box-shadow:var(--gs),inset 0 0 6px rgba(68,255,204,0.1);
+  display:flex;align-items:center;justify-content:center;
+  font-family:'Orbitron',monospace;font-size:9px;font-weight:900;color:var(--accent);
+}
+.brand-name{font-family:'Orbitron',monospace;font-size:0.78rem;font-weight:700;letter-spacing:0.2em;color:var(--accent);text-shadow:var(--gs);}
 
-.hdr-brand {
-  display: flex; align-items: center; gap: 0.6rem;
-  font-family: 'Orbitron', monospace;
-  font-size: 0.8rem; font-weight: 700; letter-spacing: 0.2em;
-  color: var(--accent); text-shadow: var(--glow-sm);
+.tabs{display:flex;gap:2px;flex:1;}
+.tab{
+  font-family:'Orbitron',monospace;font-size:0.62rem;letter-spacing:0.14em;
+  padding:0.35rem 0.75rem;border-radius:3px;border:1px solid transparent;
+  background:transparent;color:var(--muted);cursor:pointer;transition:all 0.2s;
 }
-.brand-mark {
-  width: 28px; height: 28px; border-radius: 5px; flex-shrink: 0;
-  border: 1.5px solid var(--dim);
-  box-shadow: var(--glow-sm), inset 0 0 8px rgba(68,255,204,0.1);
-  display: flex; align-items: center; justify-content: center;
-  font-size: 10px; font-weight: 900; letter-spacing: 0;
-}
+.tab:hover{color:var(--accent);border-color:var(--border);}
+.tab.on{color:var(--accent);background:rgba(68,255,204,0.07);border-color:var(--dim);text-shadow:var(--gs);}
 
-.hdr-rec {
-  display: flex; align-items: center; gap: 0.55rem;
-  font-family: 'Orbitron', monospace; font-size: 0.72rem; letter-spacing: 0.14em;
-}
-.rec-pip {
-  width: 8px; height: 8px; border-radius: 50%; background: var(--muted);
-  flex-shrink: 0; transition: background 0.3s, box-shadow 0.3s;
-}
-.rec-pip.on {
-  background: var(--red);
-  box-shadow: 0 0 6px var(--red), 0 0 14px rgba(255,34,68,0.5);
-  animation: blink-pip 1s step-start infinite;
-}
-@keyframes blink-pip { 50% { opacity: 0.2; } }
+.hdr-right{display:flex;align-items:center;gap:0.75rem;margin-left:auto;}
+.rec-pip{width:8px;height:8px;border-radius:50%;background:var(--muted);transition:all 0.3s;flex-shrink:0;}
+.rec-pip.on{background:var(--red);box-shadow:0 0 6px var(--red);animation:blink 1s step-start infinite;}
+@keyframes blink{50%{opacity:0.15;}}
+.rec-info{display:flex;align-items:center;gap:0.45rem;font-family:'Orbitron',monospace;font-size:0.68rem;letter-spacing:0.12em;}
+.rec-lbl{color:var(--muted);transition:color 0.3s;}
+.rec-lbl.on{color:var(--red);text-shadow:0 0 6px var(--red);}
+.rec-clock{color:var(--accent);text-shadow:var(--gs);min-width:7ch;font-variant-numeric:tabular-nums;}
+.conn-pip{width:7px;height:7px;border-radius:50%;background:var(--muted);transition:all 0.4s;}
+.conn-pip.on{background:var(--accent);box-shadow:var(--gs);}
+.conn-lbl{font-size:0.62rem;letter-spacing:0.12em;color:var(--muted);transition:color 0.3s;}
+.conn-lbl.on{color:var(--accent);}
+.btn-fs{background:none;border:1px solid var(--border);color:var(--muted);font-family:inherit;font-size:0.62rem;padding:0.28rem 0.55rem;border-radius:3px;cursor:pointer;transition:all 0.2s;}
+.btn-fs:hover{color:var(--accent);border-color:var(--dim);}
 
-.rec-lbl { color: var(--muted); transition: color 0.3s; letter-spacing: 0.18em; }
-.rec-lbl.on { color: var(--red); text-shadow: 0 0 7px var(--red); }
-.rec-clock {
-  color: var(--accent); text-shadow: var(--glow-sm);
-  min-width: 7ch; text-align: right; font-variant-numeric: tabular-nums;
-}
+/* ── Views ── */
+.view{display:flex;flex-direction:column;overflow:hidden;height:100%;}
+.view.hidden{display:none;}
 
-.hdr-right {
-  display: flex; align-items: center; justify-content: flex-end; gap: 0.65rem;
+/* ── Panel ── */
+.panel{
+  background:var(--surf);border:1px solid var(--border);
+  border-radius:8px;padding:0.6rem 0.85rem;position:relative;overflow:hidden;
 }
-.conn-pip { width: 7px; height: 7px; border-radius: 50%; background: var(--muted); transition: all 0.4s; }
-.conn-pip.on { background: var(--accent); box-shadow: var(--glow-sm); }
-.conn-lbl { font-size: 0.65rem; letter-spacing: 0.14em; color: var(--muted); transition: color 0.3s; }
-.conn-lbl.on { color: var(--accent); }
-.btn-fs {
-  background: transparent; border: 1px solid var(--border); color: var(--muted);
-  font-family: 'Share Tech Mono', monospace; font-size: 0.62rem; letter-spacing: 0.1em;
-  padding: 0.3rem 0.6rem; border-radius: 3px; cursor: pointer;
-  transition: color 0.2s, border-color 0.2s, box-shadow 0.2s;
-  white-space: nowrap;
+.panel::before,.panel::after{
+  content:'';position:absolute;width:12px;height:12px;
+  border-style:solid;border-color:var(--dim);opacity:0.5;
 }
-.btn-fs:hover { color: var(--accent); border-color: var(--dim); box-shadow: var(--glow-sm); }
+.panel::before{top:5px;left:5px;border-width:1.5px 0 0 1.5px;}
+.panel::after{bottom:5px;right:5px;border-width:0 1.5px 1.5px 0;}
+.plbl{font-size:0.55rem;letter-spacing:0.22em;text-transform:uppercase;color:var(--muted);margin-bottom:0.4rem;}
 
-/* ── Main grid ── */
-.main {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  grid-template-rows: 1fr auto;
-  gap: 1px;
-  background: var(--border);
-  overflow: hidden;
+/* ── LIVE view ── */
+.live-grid{
+  display:grid;
+  grid-template-columns:180px 1fr 200px;
+  grid-template-rows:1fr auto;
+  gap:6px;padding:6px;height:100%;
 }
+.live-left{display:flex;flex-direction:column;gap:6px;}
+.live-center{display:flex;flex-direction:column;gap:6px;}
+.live-right{display:flex;flex-direction:column;gap:6px;}
 
-/* ── Panel base ── */
-.panel {
-  background: var(--surface);
-  padding: 1rem 1.4rem;
-  position: relative;
-  overflow: hidden;
-}
-.panel::before, .panel::after {
-  content: ''; position: absolute;
-  width: 16px; height: 16px; border-style: solid; border-color: var(--dim); opacity: 0.6;
-}
-.panel::before { top: 7px;    left: 7px;    border-width: 1.5px 0 0 1.5px; }
-.panel::after  { bottom: 7px; right: 7px;   border-width: 0 1.5px 1.5px 0; }
-.panel-lbl {
-  font-size: 0.58rem; letter-spacing: 0.22em; text-transform: uppercase;
-  color: var(--muted); margin-bottom: 0.5rem;
-}
+/* G-force circle */
+.gf-wrap{display:flex;flex-direction:column;align-items:center;gap:0.5rem;}
+.gf-svg{width:100%;max-width:120px;}
+.gf-ring{fill:none;stroke:var(--border);stroke-width:0.04;}
+.gf-cross{stroke:var(--border);stroke-width:0.025;}
+.gf-dot{fill:var(--accent);filter:drop-shadow(0 0 0.08px var(--accent));}
+.gf-nums{display:flex;gap:1.25rem;font-size:0.7rem;}
+.gf-item{display:flex;flex-direction:column;align-items:center;gap:0.1rem;}
+.gf-lbl{font-size:0.52rem;letter-spacing:0.16em;color:var(--muted);}
+.gf-val{font-family:'Orbitron',monospace;font-size:0.82rem;font-weight:700;color:var(--accent);text-shadow:var(--gs);}
 
-/* ── Speed panel ── */
-.panel-speed {
-  display: flex; flex-direction: column;
-  justify-content: center; align-items: center;
-  text-align: center;
-}
-.speed-num {
-  font-family: 'Orbitron', monospace;
-  font-size: clamp(4.5rem, 13vw, 9.5rem);
-  font-weight: 900; line-height: 0.9;
-  color: var(--accent);
-  text-shadow: var(--glow-xl);
-  font-variant-numeric: tabular-nums;
-  letter-spacing: -0.03em;
-}
-.speed-unit {
-  margin-top: 0.6rem;
-  font-size: 0.72rem; letter-spacing: 0.3em;
-  color: var(--muted); text-transform: uppercase;
-}
+/* Status items */
+.st-rows{display:flex;flex-direction:column;gap:0.35rem;}
+.st-row{display:flex;justify-content:space-between;align-items:center;font-size:0.68rem;}
+.st-key{color:var(--muted);letter-spacing:0.1em;}
+.st-val{color:var(--accent);font-variant-numeric:tabular-nums;}
+.st-val.sm{font-size:0.6rem;}
 
-/* ── Telemetry panel ── */
-.panel-telem {
-  display: flex; flex-direction: column;
-  justify-content: center; gap: 1.25rem;
-}
+/* Gauge canvas */
+.gauge-canvas{width:100%;flex:1;min-height:0;display:block;}
 
-.bar-group { display: flex; flex-direction: column; gap: 0.4rem; }
-.bar-head {
-  display: flex; justify-content: space-between; align-items: baseline;
-  font-size: 0.62rem; letter-spacing: 0.16em;
-}
-.bar-name { color: var(--muted); }
-.bar-pct  { font-family: 'Orbitron', monospace; font-size: 0.72rem; }
-.bar-pct.thr { color: var(--accent); }
-.bar-pct.brk { color: var(--red); }
+/* Sparkline */
+.spark-canvas{width:100%;height:100%;display:block;}
 
-.bar-track {
-  height: 9px;
-  background: rgba(68,255,204,0.06);
-  border: 1px solid rgba(68,255,204,0.12);
-  border-radius: 1px; overflow: hidden;
-}
-.bar-fill { height: 100%; width: 0%; border-radius: 1px; transition: width 0.35s ease; }
-.bar-fill-thr {
-  background: linear-gradient(90deg, rgba(68,255,204,0.4) 0%, var(--accent) 100%);
-  box-shadow: 0 0 6px rgba(68,255,204,0.5);
-}
-.bar-fill-brk {
-  background: linear-gradient(90deg, rgba(255,34,68,0.4) 0%, var(--red) 100%);
-  box-shadow: 0 0 6px rgba(255,34,68,0.5);
-}
+/* Bars */
+.bar-wrap{display:flex;align-items:center;gap:0.5rem;margin-top:0.35rem;}
+.bar-track{flex:1;height:10px;background:rgba(68,255,204,0.06);border:1px solid rgba(68,255,204,0.1);border-radius:2px;overflow:hidden;}
+.bar-fill{height:100%;width:0%;border-radius:1px;transition:width 0.35s ease;}
+.bar-thr{background:linear-gradient(90deg,rgba(68,255,204,0.35),var(--accent));box-shadow:0 0 5px rgba(68,255,204,0.4);}
+.bar-brk{background:linear-gradient(90deg,rgba(255,34,68,0.35),var(--red));box-shadow:0 0 5px rgba(255,34,68,0.4);}
+.bar-pct{font-family:'Orbitron',monospace;font-size:0.75rem;font-weight:700;min-width:3.5ch;text-align:right;}
+.pct-thr{color:var(--accent);}
+.pct-brk{color:var(--red);}
 
-.mini-stats {
-  display: grid; grid-template-columns: 1fr 1fr;
-  gap: 0.6rem 1rem;
-  border-top: 1px solid var(--border);
-  padding-top: 1rem;
-}
-.mini-stat .lbl { font-size: 0.52rem; letter-spacing: 0.2em; color: var(--muted); margin-bottom: 0.2rem; }
-.mini-stat .val {
-  font-family: 'Orbitron', monospace; font-size: 0.95rem; font-weight: 700;
-  color: var(--accent); text-shadow: var(--glow-sm);
-  font-variant-numeric: tabular-nums;
-}
-.mini-stat .val.sm { font-size: 0.72rem; }
+/* Engine */
+.eng-grid{display:grid;grid-template-columns:1fr 1fr;gap:0.5rem 0.75rem;margin-top:0.25rem;}
+.eng-item{display:flex;flex-direction:column;gap:0.15rem;}
+.eng-lbl{font-size:0.52rem;letter-spacing:0.18em;color:var(--muted);}
+.eng-val{font-family:'Orbitron',monospace;font-size:0.95rem;font-weight:700;color:var(--accent);text-shadow:var(--gs);font-variant-numeric:tabular-nums;}
+.eng-val.warn{color:var(--amber);text-shadow:0 0 7px var(--amber);}
+.eng-val.hot{color:var(--red);text-shadow:0 0 7px var(--red);}
+.eng-unit{font-size:0.6rem;font-weight:400;}
+.temp-track{height:5px;background:rgba(68,255,204,0.06);border:1px solid rgba(68,255,204,0.1);border-radius:2px;overflow:hidden;margin-top:3px;}
+.temp-fill{height:100%;width:0%;transition:width 0.5s ease;border-radius:1px;}
+.gear-big{font-family:'Orbitron',monospace;font-size:2.2rem;font-weight:900;color:var(--accent);text-shadow:var(--gm);line-height:1;grid-row:span 1;}
 
-/* ── Status strip ── */
-.strip {
-  grid-column: 1 / -1;
-  display: grid;
-  grid-template-columns: repeat(4, 1fr) 1.8fr;
-  background: rgba(0,0,0,0.5);
-  border-top: 1px solid var(--border);
+/* ── TRACE view ── */
+.trace-top{display:flex;align-items:center;gap:0.5rem;padding:6px 6px 0;}
+.trace-top-lbl{font-size:0.58rem;letter-spacing:0.18em;color:var(--muted);}
+.rbtn{
+  font-family:'Orbitron',monospace;font-size:0.58rem;letter-spacing:0.1em;
+  padding:0.28rem 0.6rem;border-radius:3px;border:1px solid var(--border);
+  background:transparent;color:var(--muted);cursor:pointer;transition:all 0.2s;
 }
-.strip-cell {
-  padding: 0.55rem 0.85rem;
-  border-right: 1px solid var(--border);
-  display: flex; flex-direction: column; gap: 0.18rem;
+.rbtn.on{color:var(--accent);border-color:var(--dim);background:rgba(68,255,204,0.06);}
+.trace-charts{display:flex;flex-direction:column;gap:6px;padding:6px;flex:1;overflow:hidden;}
+.chart-row{display:flex;flex-direction:column;flex:1;min-height:0;}
+.chart-lbl{font-size:0.55rem;letter-spacing:0.2em;color:var(--muted);margin-bottom:3px;padding:0 4px;}
+.chart-canvas{flex:1;width:100%;display:block;min-height:0;}
+
+/* ── SESSION view ── */
+.sess-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;padding:6px;}
+.stat-card{
+  background:var(--surf);border:1px solid var(--border);border-radius:8px;
+  padding:0.7rem 0.85rem;text-align:center;position:relative;overflow:hidden;
 }
-.strip-cell:last-child { border-right: none; }
-.strip-lbl { font-size: 0.52rem; letter-spacing: 0.2em; color: var(--muted); text-transform: uppercase; }
-.strip-val {
-  font-family: 'Orbitron', monospace; font-size: 0.82rem;
-  color: var(--accent); font-variant-numeric: tabular-nums;
-}
-.strip-controls { display: flex; gap: 0.45rem; align-items: center; }
-.btn-ctrl {
-  font-family: 'Orbitron', monospace; font-size: 0.58rem; letter-spacing: 0.12em;
-  padding: 0.3rem 0.65rem; border-radius: 3px; border: 1px solid;
-  cursor: pointer; min-height: 30px; transition: all 0.15s; text-transform: uppercase;
-}
-.btn-ctrl:disabled { opacity: 0.25; cursor: default; }
-.btn-rec-ctrl  { background: rgba(68,255,204,0.07); color: var(--accent);  border-color: var(--dim); }
-.btn-stop-ctrl { background: rgba(255,34,68,0.07);  color: var(--red);    border-color: rgba(255,34,68,0.35); }
-.btn-save-ctrl { background: transparent;           color: var(--muted);  border-color: var(--border); }
-.btn-rec-ctrl:not(:disabled):hover  { background: rgba(68,255,204,0.18); box-shadow: var(--glow-sm); }
-.btn-stop-ctrl:not(:disabled):hover { background: rgba(255,34,68,0.18); }
-.btn-save-ctrl:not(:disabled):hover { color: var(--accent); border-color: var(--dim); }
+.stat-card::before,.stat-card::after{content:'';position:absolute;width:10px;height:10px;border-style:solid;border-color:var(--dim);opacity:0.4;}
+.stat-card::before{top:4px;left:4px;border-width:1px 0 0 1px;}
+.stat-card::after{bottom:4px;right:4px;border-width:0 1px 1px 0;}
+.sc-lbl{font-size:0.52rem;letter-spacing:0.2em;color:var(--muted);margin-bottom:0.3rem;}
+.sc-val{font-family:'Orbitron',monospace;font-size:1.6rem;font-weight:900;color:var(--accent);text-shadow:var(--gm);line-height:1;font-variant-numeric:tabular-nums;}
+.sc-unit{font-size:0.58rem;color:var(--muted);margin-top:0.2rem;letter-spacing:0.1em;}
+.clips-wrap{flex:1;overflow-y:auto;padding:0 6px 6px;}
+.clips-panel{margin:0;}
+.clip-item{padding:0.7rem 0.85rem;display:flex;align-items:center;gap:0.7rem;border-bottom:1px solid var(--border);cursor:pointer;transition:background 0.15s;}
+.clip-item:last-child{border-bottom:none;}
+.clip-item:active{background:rgba(68,255,204,0.04);}
+.clip-icon{width:36px;height:36px;border-radius:6px;background:rgba(68,255,204,0.05);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;}
+.clip-info{flex:1;min-width:0;}
+.clip-name{font-size:0.8rem;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.clip-meta{font-size:0.68rem;color:var(--muted);margin-top:0.1rem;}
+.clip-saved{font-size:0.58rem;padding:0.15rem 0.4rem;border-radius:3px;background:rgba(68,255,204,0.07);color:var(--accent);border:1px solid var(--dim);font-weight:700;letter-spacing:0.06em;flex-shrink:0;}
+.empty-state{padding:2rem;text-align:center;color:var(--muted);font-size:0.8rem;}
 
 /* ── Footer ── */
-.ftr {
-  padding: 0.35rem 1.25rem;
-  border-top: 1px solid var(--border);
-  display: flex; justify-content: space-between; align-items: center;
-  font-size: 0.58rem; letter-spacing: 0.12em; color: var(--muted);
-  background: rgba(0,0,0,0.6);
+.ftr{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0.38rem 1.1rem;border-top:1px solid var(--border);
+  background:rgba(0,0,0,0.55);gap:0.75rem;flex-wrap:wrap;
 }
-.ftr-meta { display: flex; gap: 1.5rem; }
-.ftr-meta span b { color: var(--text); font-weight: normal; }
+.ftr-sys{display:flex;gap:1.1rem;font-size:0.58rem;letter-spacing:0.1em;}
+.fk{color:var(--muted);}
+.fv{color:var(--text);}
+.ftr-ctrl{display:flex;gap:0.4rem;}
+.btn-c{font-family:'Orbitron',monospace;font-size:0.58rem;letter-spacing:0.1em;padding:0.3rem 0.65rem;border-radius:3px;border:1px solid;cursor:pointer;min-height:28px;transition:all 0.15s;}
+.btn-c:disabled{opacity:0.25;cursor:default;}
+.btn-rec{background:rgba(68,255,204,0.07);color:var(--accent);border-color:var(--dim);}
+.btn-stp{background:rgba(255,34,68,0.07);color:var(--red);border-color:rgba(255,34,68,0.35);}
+.btn-sav{background:transparent;color:var(--muted);border-color:var(--border);}
+.btn-rec:not(:disabled):hover{background:rgba(68,255,204,0.15);box-shadow:var(--gs);}
+.btn-stp:not(:disabled):hover{background:rgba(255,34,68,0.15);}
+.btn-sav:not(:disabled):hover{color:var(--accent);border-color:var(--dim);}
 
 /* ── Mobile ── */
-@media (max-width: 640px) {
-  html { height: auto; }
-  body { height: auto; overflow: auto; }
-  .shell { height: auto; min-height: 100dvh; overflow: visible; grid-template-rows: auto auto auto; }
-  .main  { grid-template-columns: 1fr; overflow: visible; }
-  .panel-speed { min-height: 42vw; }
-  .panel-telem { grid-row: 2; }
-  .strip {
-    grid-column: 1; grid-row: 3;
-    grid-template-columns: repeat(2, 1fr);
-  }
-  .strip-cell:nth-child(2) { border-right: none; }
-  .strip-cell:nth-child(3) { border-top: 1px solid var(--border); }
-  .strip-cell:nth-child(4) { border-top: 1px solid var(--border); border-right: none; }
-  .strip-cell:nth-child(5) {
-    grid-column: 1 / -1; border-right: none;
-    border-top: 1px solid var(--border);
-  }
-  .speed-num { font-size: clamp(5rem, 25vw, 8rem); }
-  .hdr-brand span { display: none; }
-  .ftr-meta span:not(:first-child) { display: none; }
+@media(max-width:700px){
+  html,body{overflow:auto;}
+  .shell{height:auto;min-height:100dvh;overflow:visible;grid-template-rows:auto auto auto;}
+  .view{height:auto;overflow:visible;}
+  .live-grid{grid-template-columns:1fr;grid-template-rows:auto;height:auto;}
+  .live-right{grid-row:2;}
+  .live-left{grid-row:3;}
+  .gauge-canvas{height:52vw!important;}
+  .sess-stats{grid-template-columns:repeat(2,1fr);}
+  .hdr{gap:0.4rem;}
+  .brand-name{display:none;}
 }
 </style>
 </head>
 <body>
 <div class="shell">
 
-  <header class="hdr">
-    <div class="hdr-brand">
-      <div class="brand-mark">CR</div>
-      <span>CANREC</span>
-    </div>
-
-    <div class="hdr-rec">
+<header class="hdr">
+  <div class="brand">
+    <div class="brand-mark">CR</div>
+    <span class="brand-name">CANREC</span>
+  </div>
+  <nav class="tabs">
+    <button class="tab on" data-tab="live">LIVE</button>
+    <button class="tab" data-tab="trace">TRACE</button>
+    <button class="tab" data-tab="session">SESSION</button>
+  </nav>
+  <div class="hdr-right">
+    <div class="rec-info">
       <div class="rec-pip" id="rec-pip"></div>
       <span class="rec-lbl" id="rec-lbl">STANDBY</span>
       <span class="rec-clock" id="rec-clock">--:--:--</span>
     </div>
-
-    <div class="hdr-right">
+    <div class="rec-info">
       <div class="conn-pip" id="conn-pip"></div>
       <span class="conn-lbl" id="conn-lbl">OFFLINE</span>
-      <button class="btn-fs" onclick="toggleFs()">⛶ FULLSCREEN</button>
     </div>
-  </header>
+    <button class="btn-fs" onclick="toggleFs()">⛶</button>
+  </div>
+</header>
 
-  <div class="main">
+<!-- ── LIVE ── -->
+<div class="view" id="v-live">
+<div class="live-grid">
 
-    <div class="panel panel-speed">
-      <div class="panel-lbl">SPEED</div>
-      <div class="speed-num" id="speed">--</div>
-      <div class="speed-unit">km / h</div>
-    </div>
-
-    <div class="panel panel-telem">
-      <div>
-        <div class="bar-group">
-          <div class="bar-head">
-            <span class="bar-name">THROTTLE</span>
-            <span class="bar-pct thr" id="thr-pct">-- %</span>
-          </div>
-          <div class="bar-track"><div class="bar-fill bar-fill-thr" id="thr-bar"></div></div>
-        </div>
-        <div style="height:1.1rem"></div>
-        <div class="bar-group">
-          <div class="bar-head">
-            <span class="bar-name">BRAKE</span>
-            <span class="bar-pct brk" id="brk-pct">-- %</span>
-          </div>
-          <div class="bar-track"><div class="bar-fill bar-fill-brk" id="brk-bar"></div></div>
-        </div>
-      </div>
-
-      <div class="mini-stats">
-        <div class="mini-stat">
-          <div class="lbl">GPS FIX</div>
-          <div class="val" id="gps-fix">--</div>
-        </div>
-        <div class="mini-stat">
-          <div class="lbl">CAMERA</div>
-          <div class="val" id="cam-st">--</div>
-        </div>
-        <div class="mini-stat">
-          <div class="lbl">SEGMENT</div>
-          <div class="val sm" id="seg-val">--</div>
-        </div>
-        <div class="mini-stat">
-          <div class="lbl">REC TIME</div>
-          <div class="val sm" id="dur-val">--:--:--</div>
+  <div class="live-left">
+    <div class="panel" style="flex:1">
+      <div class="plbl">G-FORCE</div>
+      <div class="gf-wrap">
+        <svg class="gf-svg" viewBox="-1.3 -1.3 2.6 2.6">
+          <circle cx="0" cy="0" r="1.0" class="gf-ring"/>
+          <circle cx="0" cy="0" r="0.5" class="gf-ring"/>
+          <line x1="-1.2" y1="0" x2="1.2" y2="0" class="gf-cross"/>
+          <line x1="0" y1="-1.2" x2="0" y2="1.2" class="gf-cross"/>
+          <circle id="g-dot" cx="0" cy="0" r="0.1" class="gf-dot"/>
+        </svg>
+        <div class="gf-nums">
+          <div class="gf-item"><div class="gf-lbl">LON</div><div class="gf-val" id="gf-lon">--</div></div>
+          <div class="gf-item"><div class="gf-lbl">LAT</div><div class="gf-val" id="gf-lat">--</div></div>
         </div>
       </div>
     </div>
-
-    <div class="strip">
-      <div class="strip-cell">
-        <div class="strip-lbl">Uptime</div>
-        <div class="strip-val" id="s-up">--</div>
-      </div>
-      <div class="strip-cell">
-        <div class="strip-lbl">Memory</div>
-        <div class="strip-val" id="s-mem">--%</div>
-      </div>
-      <div class="strip-cell">
-        <div class="strip-lbl">Load</div>
-        <div class="strip-val" id="s-load">--</div>
-      </div>
-      <div class="strip-cell">
-        <div class="strip-lbl">Storage</div>
-        <div class="strip-val" id="s-stor">--</div>
-      </div>
-      <div class="strip-cell">
-        <div class="strip-lbl">Controls</div>
-        <div class="strip-controls">
-          <button class="btn-ctrl btn-rec-ctrl"  id="btn-rec"  disabled>REC</button>
-          <button class="btn-ctrl btn-stop-ctrl" id="btn-stop" disabled>STOP</button>
-          <button class="btn-ctrl btn-save-ctrl" id="btn-save" disabled>SAVE</button>
-        </div>
+    <div class="panel" style="flex:0 0 auto">
+      <div class="plbl">STATUS</div>
+      <div class="st-rows">
+        <div class="st-row"><span class="st-key">GPS</span><span class="st-val" id="l-gps">--</span></div>
+        <div class="st-row"><span class="st-key">CAM</span><span class="st-val" id="l-cam">--</span></div>
+        <div class="st-row"><span class="st-key">SEG</span><span class="st-val sm" id="l-seg">--</span></div>
       </div>
     </div>
-
   </div>
 
-  <footer class="ftr">
-    <div class="ftr-meta">
-      <span>HOST <b id="f-host">--</b></span>
-      <span>IP <b>192.168.99.1</b></span>
-      <span>PHASE <b>0</b></span>
+  <div class="live-center">
+    <div class="panel" style="flex:1;display:flex;flex-direction:column;">
+      <canvas id="gauge-cv" class="gauge-canvas"></canvas>
     </div>
-    <span>CANREC DVR</span>
-  </footer>
+    <div class="panel" style="flex:0 0 90px;">
+      <div class="plbl">SPEED — 30 s</div>
+      <canvas id="spark-cv" class="spark-canvas" style="height:55px;"></canvas>
+    </div>
+  </div>
+
+  <div class="live-right">
+    <div class="panel">
+      <div class="plbl">THROTTLE</div>
+      <div class="bar-wrap">
+        <div class="bar-track"><div class="bar-fill bar-thr" id="thr-bar"></div></div>
+        <span class="bar-pct pct-thr" id="thr-pct">--%</span>
+      </div>
+    </div>
+    <div class="panel">
+      <div class="plbl">BRAKE</div>
+      <div class="bar-wrap">
+        <div class="bar-track"><div class="bar-fill bar-brk" id="brk-bar"></div></div>
+        <span class="bar-pct pct-brk" id="brk-pct">--%</span>
+      </div>
+    </div>
+    <div class="panel" style="flex:1">
+      <div class="plbl">ENGINE</div>
+      <div class="eng-grid">
+        <div class="eng-item" style="grid-column:span 2">
+          <div class="eng-lbl">TEMP</div>
+          <div class="eng-val" id="e-temp">--<span class="eng-unit">°C</span></div>
+          <div class="temp-track"><div class="temp-fill" id="temp-bar"></div></div>
+        </div>
+        <div class="eng-item">
+          <div class="eng-lbl">RPM</div>
+          <div class="eng-val" id="e-rpm" style="font-size:0.85rem">--</div>
+        </div>
+        <div class="eng-item">
+          <div class="eng-lbl">GEAR</div>
+          <div class="gear-big" id="e-gear">-</div>
+        </div>
+      </div>
+    </div>
+  </div>
 
 </div>
+</div>
+
+<!-- ── TRACE ── -->
+<div class="view hidden" id="v-trace">
+  <div class="trace-top">
+    <span class="trace-top-lbl">WINDOW</span>
+    <button class="rbtn" data-range="30">30S</button>
+    <button class="rbtn on" data-range="120">2M</button>
+    <button class="rbtn" data-range="300">5M</button>
+    <button class="rbtn" data-range="0">ALL</button>
+  </div>
+  <div class="trace-charts">
+    <div class="chart-row">
+      <div class="chart-lbl">SPEED <span style="color:var(--muted)">km/h</span></div>
+      <canvas id="c-speed" class="chart-canvas"></canvas>
+    </div>
+    <div class="chart-row">
+      <div class="chart-lbl">
+        <span style="color:var(--accent)">▬</span> THROTTLE &nbsp;
+        <span style="color:var(--red)">▬</span> BRAKE
+      </div>
+      <canvas id="c-pedals" class="chart-canvas"></canvas>
+    </div>
+    <div class="chart-row">
+      <div class="chart-lbl">ENGINE TEMP <span style="color:var(--muted)">°C</span></div>
+      <canvas id="c-temp" class="chart-canvas"></canvas>
+    </div>
+  </div>
+</div>
+
+<!-- ── SESSION ── -->
+<div class="view hidden" id="v-session">
+  <div class="sess-stats">
+    <div class="stat-card"><div class="sc-lbl">TOP SPEED</div><div class="sc-val" id="ss-top">--</div><div class="sc-unit">km/h</div></div>
+    <div class="stat-card"><div class="sc-lbl">AVG SPEED</div><div class="sc-val" id="ss-avg">--</div><div class="sc-unit">km/h</div></div>
+    <div class="stat-card"><div class="sc-lbl">MAX THROTTLE</div><div class="sc-val" id="ss-thr">--</div><div class="sc-unit">%</div></div>
+    <div class="stat-card"><div class="sc-lbl">MAX BRAKE</div><div class="sc-val" id="ss-brk">--</div><div class="sc-unit">%</div></div>
+    <div class="stat-card"><div class="sc-lbl">MAX TEMP</div><div class="sc-val" id="ss-tmp">--</div><div class="sc-unit">°C</div></div>
+    <div class="stat-card"><div class="sc-lbl">SESSION TIME</div><div class="sc-val" id="ss-dur" style="font-size:1.1rem">--:--:--</div><div class="sc-unit">h:m:s</div></div>
+  </div>
+  <div class="clips-wrap">
+    <div class="panel clips-panel">
+      <div class="plbl">CLIPS</div>
+      <div id="clips-list"><div class="empty-state">No recordings yet</div></div>
+    </div>
+  </div>
+</div>
+
+<footer class="ftr">
+  <div class="ftr-sys">
+    <span><span class="fk">HOST </span><span class="fv" id="f-host">--</span></span>
+    <span><span class="fk">UP </span><span class="fv" id="f-up">--</span></span>
+    <span><span class="fk">MEM </span><span class="fv" id="f-mem">--%</span></span>
+    <span><span class="fk">LOAD </span><span class="fv" id="f-load">--</span></span>
+    <span><span class="fk">STOR </span><span class="fv" id="f-stor">--</span></span>
+  </div>
+  <div class="ftr-ctrl">
+    <button class="btn-c btn-rec" id="btn-rec" disabled>REC</button>
+    <button class="btn-c btn-stp" id="btn-stp" disabled>STOP</button>
+    <button class="btn-c btn-sav" id="btn-sav" disabled>SAVE</button>
+  </div>
+</footer>
+</div>
+
 <script>
 const el = id => document.getElementById(id);
+const DPR = window.devicePixelRatio || 1;
 
-let isRec = false, recStart = null, tick = null;
+// ── Data ──
+const MAXPTS = 600; // 10 min at 1 Hz
+const pts = [];     // {t, speed, throttle, brake, temp}
+const sess = {top:0, sumSpd:0, maxThr:0, maxBrk:0, maxTmp:0, n:0, start:Date.now()};
+let traceRange = 120;
+let isRec = false, recStart = null, recTick = null;
+let curView = 'live';
 
-const fmtUp = s => s < 60 ? s+'s' : s < 3600
-  ? Math.floor(s/60)+'m '+( s%60)+'s'
-  : Math.floor(s/3600)+'h '+Math.floor((s%3600)/60)+'m';
+// ── Helpers ──
+const fmtDur = s => [Math.floor(s/3600),Math.floor((s%3600)/60),s%60].map(n=>String(n).padStart(2,'0')).join(':');
+const fmtUp  = s => s<60?s+'s':s<3600?Math.floor(s/60)+'m':Math.floor(s/3600)+'h'+Math.floor((s%3600)/60)+'m';
+const clamp  = (v,a,b) => Math.max(a, Math.min(b, v));
 
-const fmtDur = s => [Math.floor(s/3600), Math.floor((s%3600)/60), s%60]
-  .map(n => String(n).padStart(2,'0')).join(':');
-
+// ── Recording ──
 function setRec(on, srvDur) {
   isRec = on;
   el('rec-pip').classList.toggle('on', on);
   el('rec-lbl').classList.toggle('on', on);
-  el('rec-lbl').textContent  = on ? 'REC' : 'STANDBY';
-  el('btn-rec').disabled  =  on;
-  el('btn-stop').disabled = !on;
-  el('btn-save').disabled = !on;
-  clearInterval(tick); tick = null;
+  el('rec-lbl').textContent = on ? 'REC' : 'STANDBY';
+  el('btn-rec').disabled =  on;
+  el('btn-stp').disabled = !on;
+  el('btn-sav').disabled = !on;
+  clearInterval(recTick); recTick = null;
   if (on) {
-    recStart = Date.now() - (srvDur || 0) * 1000;
+    recStart = Date.now() - (srvDur||0)*1000;
     const upd = () => {
-      const t = fmtDur(Math.floor((Date.now() - recStart) / 1000));
+      const t = fmtDur(Math.floor((Date.now()-recStart)/1000));
       el('rec-clock').textContent = t;
-      el('dur-val').textContent   = t;
+      el('ss-dur').textContent    = t;
     };
-    upd(); tick = setInterval(upd, 1000);
+    upd(); recTick = setInterval(upd, 1000);
   } else {
     el('rec-clock').textContent = '--:--:--';
-    el('dur-val').textContent   = '--:--:--';
-    el('seg-val').textContent   = '--';
   }
 }
 
-function setBar(barId, pctId, val) {
-  const v = val != null ? Math.round(val) : null;
-  el(barId).style.width    = (v ?? 0) + '%';
-  el(pctId).textContent    = v != null ? v + ' %' : '-- %';
+// ── Gauge (canvas) ──
+function drawGauge(cv, speed, topSpd, maxSpd=200) {
+  const w = cv.offsetWidth, h = cv.offsetHeight;
+  if (!w || !h) return;
+  cv.width = w*DPR; cv.height = h*DPR;
+  const ctx = cv.getContext('2d');
+  ctx.scale(DPR, DPR);
+
+  const cx = w/2, cy = h*0.5;
+  const r  = Math.min(w*0.42, h*0.44);
+  const SA = (210*Math.PI)/180;  // start angle
+  const EA = SA + (240*Math.PI)/180; // end angle (+240°)
+
+  // Track
+  ctx.strokeStyle = 'rgba(68,255,204,0.1)';
+  ctx.lineWidth = Math.max(3, r*0.05);
+  ctx.lineCap = 'round';
+  ctx.beginPath(); ctx.arc(cx, cy, r, SA, EA); ctx.stroke();
+
+  // Tick marks
+  for (let v = 0; v <= maxSpd; v += 20) {
+    const f = v/maxSpd;
+    const a = SA + f*(EA-SA);
+    const isMaj = v%40===0;
+    const tl = isMaj ? r*0.12 : r*0.06;
+    ctx.strokeStyle = isMaj ? 'rgba(68,255,204,0.55)' : 'rgba(68,255,204,0.2)';
+    ctx.lineWidth = isMaj ? 1.5 : 1;
+    ctx.beginPath();
+    ctx.moveTo(cx+(r-tl)*Math.cos(a), cy+(r-tl)*Math.sin(a));
+    ctx.lineTo(cx+r    *Math.cos(a), cy+r    *Math.sin(a));
+    ctx.stroke();
+    if (isMaj) {
+      const tr = r-tl-r*0.1;
+      ctx.font = `${r*0.1}px "Share Tech Mono",monospace`;
+      ctx.fillStyle = 'rgba(68,255,204,0.35)';
+      ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+      ctx.fillText(v, cx+tr*Math.cos(a), cy+tr*Math.sin(a));
+    }
+  }
+
+  // Fill arc
+  if (speed != null && speed > 0) {
+    const f = clamp(speed/maxSpd, 0, 1);
+    const color = speed < 120 ? '#44ffcc' : speed < 160 ? '#ffaa00' : '#ff2244';
+    ctx.strokeStyle = color;
+    ctx.shadowColor = color; ctx.shadowBlur = 10;
+    ctx.lineWidth = Math.max(4, r*0.055);
+    ctx.lineCap = 'round';
+    ctx.beginPath(); ctx.arc(cx, cy, r, SA, SA+f*(EA-SA)); ctx.stroke();
+    ctx.shadowBlur = 0;
+  }
+
+  // Speed number
+  const numSize = r*0.52;
+  ctx.font = `900 ${numSize}px Orbitron,monospace`;
+  ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+  const hasData = speed != null;
+  ctx.fillStyle = hasData ? '#44ffcc' : 'rgba(68,255,204,0.25)';
+  ctx.shadowColor = '#44ffcc'; ctx.shadowBlur = hasData ? 14 : 0;
+  ctx.fillText(hasData ? Math.round(speed) : '--', cx, cy+r*0.05);
+  ctx.shadowBlur = 0;
+
+  // Unit
+  ctx.font = `${r*0.13}px "Share Tech Mono",monospace`;
+  ctx.fillStyle = 'rgba(68,255,204,0.38)';
+  ctx.fillText('km/h', cx, cy+r*0.38);
+
+  // Top speed
+  if (topSpd > 0) {
+    ctx.font = `${r*0.1}px "Share Tech Mono",monospace`;
+    ctx.fillStyle = 'rgba(68,255,204,0.3)';
+    ctx.fillText(`TOP ${Math.round(topSpd)}`, cx, cy+r*0.56);
+  }
 }
 
+// ── Line chart (canvas) ──
+function drawChart(cv, datasets, windowSec) {
+  const w = cv.offsetWidth, h = cv.offsetHeight;
+  if (!w || !h || pts.length < 2) return;
+  cv.width = w*DPR; cv.height = h*DPR;
+  const ctx = cv.getContext('2d');
+  ctx.scale(DPR, DPR);
+
+  ctx.clearRect(0, 0, w, h);
+
+  const now = Date.now();
+  const startT = windowSec > 0 ? now - windowSec*1000 : pts[0].t;
+  const span   = now - startT;
+  const data   = pts.filter(p => p.t >= startT);
+  if (data.length < 2) return;
+
+  // Grid
+  ctx.strokeStyle = 'rgba(68,255,204,0.05)';
+  ctx.lineWidth = 1;
+  for (let i=0; i<=4; i++) {
+    const y = Math.round(h*i/4)+0.5;
+    ctx.beginPath(); ctx.moveTo(0,y); ctx.lineTo(w,y); ctx.stroke();
+  }
+
+  for (const ds of datasets) {
+    const vals = data.map(p => p[ds.key] ?? 0);
+    const min  = ds.min ?? 0;
+    const max  = ds.max;
+    const xs   = data.map(p => ((p.t-startT)/span)*w);
+    const ys   = vals.map(v => h - clamp((v-min)/(max-min),0,1)*h);
+
+    // Fill
+    ctx.beginPath();
+    xs.forEach((x,i) => i===0 ? ctx.moveTo(x,ys[i]) : ctx.lineTo(x,ys[i]));
+    ctx.lineTo(xs[xs.length-1], h);
+    ctx.lineTo(xs[0], h);
+    ctx.closePath();
+    ctx.fillStyle = ds.fill;
+    ctx.fill();
+
+    // Line
+    ctx.strokeStyle = ds.color;
+    ctx.shadowColor = ds.color; ctx.shadowBlur = 3;
+    ctx.lineWidth = 1.5; ctx.lineJoin = 'round';
+    ctx.beginPath();
+    xs.forEach((x,i) => i===0 ? ctx.moveTo(x,ys[i]) : ctx.lineTo(x,ys[i]));
+    ctx.stroke();
+    ctx.shadowBlur = 0;
+  }
+}
+
+// ── Render ──
+function renderLive(d) {
+  const spd = d?.gps?.speed_kmh;
+  const thr = d?.gps?.throttle;
+  const brk = d?.gps?.brake;
+  const eng = d?.engine;
+  const gf  = d?.gforce;
+
+  drawGauge(el('gauge-cv'), spd, sess.top);
+
+  if (thr != null) { el('thr-bar').style.width=thr+'%'; el('thr-pct').textContent=Math.round(thr)+'%'; }
+  if (brk != null) { el('brk-bar').style.width=brk+'%'; el('brk-pct').textContent=Math.round(brk)+'%'; }
+
+  if (eng) {
+    const t = eng.temp_c;
+    const cls = t > 100 ? 'hot' : t > 95 ? 'warn' : '';
+    el('e-temp').innerHTML = `${t}<span class="eng-unit">°C</span>`;
+    el('e-temp').className = 'eng-val' + (cls?' '+cls:'');
+    const fill = el('temp-bar');
+    const pct = clamp((t-60)/60*100, 0, 100);
+    fill.style.width = pct+'%';
+    fill.style.background = t>100?'#ff2244':t>95?'#ffaa00':'#44ffcc';
+    el('e-rpm').textContent = eng.rpm ? Math.round(eng.rpm).toLocaleString() : '--';
+    el('e-gear').textContent = eng.gear ?? '-';
+  }
+
+  if (gf) {
+    el('gf-lon').textContent = (gf.lon >= 0 ? '+' : '') + parseFloat(gf.lon).toFixed(1);
+    el('gf-lat').textContent = (gf.lat >= 0 ? '+' : '') + parseFloat(gf.lat).toFixed(1);
+    const lon = clamp(parseFloat(gf.lon), -1.2, 1.2);
+    const lat = clamp(parseFloat(gf.lat), -1.2, 1.2);
+    el('g-dot').setAttribute('cx', lat.toFixed(3));
+    el('g-dot').setAttribute('cy', (-lon).toFixed(3));
+  }
+
+  el('l-gps').textContent = d?.gps?.fix ? '3D ●' : '--';
+  el('l-cam').textContent = d?.camera?.connected ? 'OK' : '--';
+  if (d?.recording?.segment) el('l-seg').textContent = d.recording.segment;
+
+  drawChart(el('spark-cv'),
+    [{key:'speed',color:'#44ffcc',fill:'rgba(68,255,204,0.07)',max:200}], 30);
+}
+
+function renderTrace() {
+  const rng = traceRange;
+  drawChart(el('c-speed'),
+    [{key:'speed',  color:'#44ffcc', fill:'rgba(68,255,204,0.07)', max:200}], rng);
+  drawChart(el('c-pedals'), [
+    {key:'throttle',color:'#44ffcc', fill:'rgba(68,255,204,0.06)', max:100},
+    {key:'brake',   color:'#ff2244', fill:'rgba(255,34,68,0.06)',  max:100}
+  ], rng);
+  drawChart(el('c-temp'),
+    [{key:'temp', color:'#ffaa00', fill:'rgba(255,170,0,0.07)', min:60, max:120}], rng);
+}
+
+function renderSession() {
+  el('ss-top').textContent = sess.top  > 0 ? Math.round(sess.top)  : '--';
+  el('ss-avg').textContent = sess.n    > 0 ? Math.round(sess.sumSpd/sess.n) : '--';
+  el('ss-thr').textContent = sess.maxThr > 0 ? Math.round(sess.maxThr) : '--';
+  el('ss-brk').textContent = sess.maxBrk > 0 ? Math.round(sess.maxBrk) : '--';
+  el('ss-tmp').textContent = sess.maxTmp > 0 ? Math.round(sess.maxTmp) : '--';
+}
+
+function render(d) {
+  if (curView === 'live')    renderLive(d);
+  if (curView === 'trace')   renderTrace();
+  if (curView === 'session') renderSession();
+}
+
+// ── Poll ──
 async function poll() {
   try {
     const r = await fetch('/cgi-bin/status.cgi', {cache:'no-store'});
@@ -448,46 +649,94 @@ async function poll() {
     el('conn-lbl').textContent = 'ONLINE';
     el('btn-rec').disabled = isRec;
     el('f-host').textContent = d.hostname || '--';
+    el('f-up').textContent   = fmtUp(d.uptime||0);
+    el('f-load').textContent = (d.load?.[0]??'--').toString();
+    if (d.memory) el('f-mem').textContent = Math.round(d.memory.used_mb/d.memory.total_mb*100)+'%';
+    if (d.storage?.total_mb>0) el('f-stor').textContent = Math.round(d.storage.used_mb/d.storage.total_mb*100)+'%';
 
-    el('s-up').textContent   = fmtUp(d.uptime || 0);
-    el('s-load').textContent = (d.load?.[0] ?? '--').toString();
-    if (d.memory)
-      el('s-mem').textContent = Math.round(d.memory.used_mb / d.memory.total_mb * 100) + '%';
-    if (d.storage?.total_mb > 0)
-      el('s-stor').textContent = Math.round(d.storage.used_mb / d.storage.total_mb * 100) + '%';
+    if (d.recording && d.recording.active !== isRec) setRec(d.recording.active, d.recording.duration);
 
-    const rec = d.recording;
-    if (rec && rec.active !== isRec) setRec(rec.active, rec.duration);
-    if (rec?.segment) el('seg-val').textContent = rec.segment;
+    // History
+    const spd = d.gps?.speed_kmh ?? 0;
+    const thr = d.gps?.throttle  ?? 0;
+    const brk = d.gps?.brake     ?? 0;
+    const tmp = d.engine?.temp_c ?? 0;
+    pts.push({t:Date.now(), speed:spd, throttle:thr, brake:brk, temp:tmp});
+    if (pts.length > MAXPTS) pts.shift();
 
-    if (d.camera) el('cam-st').textContent = d.camera.connected ? 'OK' : '--';
-
-    const gps = d.gps;
-    if (gps) {
-      el('gps-fix').textContent = gps.fix ? '3D' : '--';
-      if (gps.speed_kmh != null) el('speed').textContent = Math.round(gps.speed_kmh);
-      setBar('thr-bar','thr-pct', gps.throttle ?? null);
-      setBar('brk-bar','brk-pct', gps.brake    ?? null);
+    // Session stats
+    if (spd > 0) {
+      sess.top    = Math.max(sess.top, spd);
+      sess.sumSpd+= spd; sess.n++;
+      sess.maxThr = Math.max(sess.maxThr, thr);
+      sess.maxBrk = Math.max(sess.maxBrk, brk);
+      sess.maxTmp = Math.max(sess.maxTmp, tmp);
     }
+
+    render(d);
   } catch {
     el('conn-pip').classList.remove('on');
     el('conn-lbl').classList.remove('on');
     el('conn-lbl').textContent = 'OFFLINE';
+    if (curView==='live') drawGauge(el('gauge-cv'), null, sess.top);
   }
 }
 
-el('btn-rec').addEventListener('click',  () => setRec(true));
-el('btn-stop').addEventListener('click', () => setRec(false));
-el('btn-save').addEventListener('click', () => { /* Phase 1 */ });
-
-function toggleFs() {
-  document.fullscreenElement
-    ? document.exitFullscreen?.()
-    : document.documentElement.requestFullscreen?.();
+async function pollClips() {
+  try {
+    const r = await fetch('/cgi-bin/clips.cgi', {cache:'no-store'});
+    if (!r.ok) return;
+    const d = await r.json();
+    if (!d.clips?.length) return;
+    el('clips-list').innerHTML = d.clips.map(c=>`
+      <div class="clip-item">
+        <div class="clip-icon">▶</div>
+        <div class="clip-info">
+          <div class="clip-name">${c.name}</div>
+          <div class="clip-meta">${c.date} · ${c.duration} · ${c.size}</div>
+        </div>
+        ${c.locked?'<span class="clip-saved">SAVED</span>':''}
+      </div>`).join('');
+  } catch {}
 }
 
+// ── Tab switching ──
+document.querySelectorAll('.tab').forEach(btn => {
+  btn.addEventListener('click', () => {
+    curView = btn.dataset.tab;
+    document.querySelectorAll('.tab').forEach(b => b.classList.toggle('on', b===btn));
+    document.querySelectorAll('.view').forEach(v => v.classList.toggle('hidden', v.id!=='v-'+curView));
+    if (curView==='trace') renderTrace();
+    if (curView==='session') renderSession();
+  });
+});
+
+// ── Trace range buttons ──
+document.querySelectorAll('.rbtn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    traceRange = parseInt(btn.dataset.range);
+    document.querySelectorAll('.rbtn').forEach(b => b.classList.toggle('on', b===btn));
+    renderTrace();
+  });
+});
+
+// ── Controls ──
+el('btn-rec').addEventListener('click', () => setRec(true));
+el('btn-stp').addEventListener('click', () => setRec(false));
+
+// ── Fullscreen ──
+function toggleFs() {
+  document.fullscreenElement ? document.exitFullscreen?.() : document.documentElement.requestFullscreen?.();
+}
+
+// ── Resize: redraw canvases when window resizes ──
+window.addEventListener('resize', () => render(null));
+
+// ── Init ──
 poll();
-setInterval(poll, 3000);
+pollClips();
+setInterval(poll, 1000);
+setInterval(pollClips, 15000);
 </script>
 </body>
 </html>
