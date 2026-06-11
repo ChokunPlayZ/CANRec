@@ -1,0 +1,25 @@
+#!/bin/sh
+# Store host keys in /tmp (tmpfs) because the root is read-only.
+# Keys regenerate each boot — use StrictHostKeyChecking=no on the client.
+KEYDIR=/tmp/dropbear
+
+case "$1" in
+    start)
+        printf "Starting SSH: "
+        mkdir -p "$KEYDIR"
+        dropbear -R \
+            -r "$KEYDIR/dropbear_rsa_host_key" \
+            -r "$KEYDIR/dropbear_ecdsa_host_key" \
+            -r "$KEYDIR/dropbear_ed25519_host_key"
+        echo "OK"
+        ;;
+    stop)
+        printf "Stopping SSH: "
+        kill "$(cat /var/run/dropbear.pid 2>/dev/null)" 2>/dev/null || true
+        echo "OK"
+        ;;
+    *)
+        echo "Usage: $0 {start|stop}"
+        exit 1
+        ;;
+esac

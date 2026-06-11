@@ -14,7 +14,7 @@ BR2_KERNEL_HEADERS_6_6=y
 # ── System ────────────────────────────────────────────────────────────────────
 BR2_TARGET_GENERIC_HOSTNAME="canrec"
 BR2_TARGET_GENERIC_ISSUE="CANRec DVR"
-BR2_TARGET_GENERIC_ROOT_PASSWD=""
+BR2_TARGET_GENERIC_ROOT_PASSWD="canrec"
 # udhcpc on eth0 via Buildroot-generated S41dhcp init script
 BR2_SYSTEM_DHCP="eth0"
 
@@ -38,6 +38,9 @@ BR2_LINUX_KERNEL_NEEDS_HOST_LIBFDT=y
 # ── Raspberry Pi firmware (bootloader blobs) ──────────────────────────────────
 BR2_PACKAGE_RPI_FIRMWARE=y
 BR2_PACKAGE_RPI_FIRMWARE_VARIANT_PI4=y
+
+# ── SSH (Dropbear — lightweight, suits embedded) ─────────────────────────────
+BR2_PACKAGE_DROPBEAR=y
 
 # ── WiFi AP ───────────────────────────────────────────────────────────────────
 BR2_PACKAGE_HOSTAPD=y
